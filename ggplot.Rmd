@@ -5,5 +5,14 @@ output: html_notebook
 
 
 ```{r}
-plot(cars)
+
+library(data.table)
+library(Lahman) #has data sets
+library(colourpicker) #addin useful for selecting colours
+library(cowplot) #set theme
+library(data.table) #set theme
+
+#clear environment
+rm(list = ls())
+
 ```
