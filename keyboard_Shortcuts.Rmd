@@ -1,0 +1,27 @@
+---
+title: "R Keyboard Shortucts"
+output: html_notebook
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+### **Non R specific**
+
+control+a: go to end of line control+e: go to start of line
+
+control+u: clear line before cursor
+
+control+k: clear line after cursor
+
+control+c - general clear command line
+
+control+l - clear command window
+
+### **R specific**
+
+control+1 - move cursor to editor (from console)
+
+control+2 - move cursor to console (from editor)
+
+### **Links/References**
