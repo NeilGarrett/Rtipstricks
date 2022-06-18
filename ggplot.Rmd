@@ -1,0 +1,9 @@
+---
+title: "ggplot_tickstricks"
+output: html_notebook
+---
+
+
+```{r}
+plot(cars)
+```
