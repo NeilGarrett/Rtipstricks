@@ -8,20 +8,20 @@ editor_options:
 
 ### **Non R specific**
 
-control+a: go to end of line control+e: go to start of line
+**control+a:** go to end of line control+e: go to start of line
 
-control+u: clear line before cursor
+**control+u:** clear line before cursor
 
-control+k: clear line after cursor
+**control+k:** clear line after cursor
 
-control+c - general clear command line
+**control+c:** general clear command line
 
-control+l - clear command window
+**control+l:** clear command window
 
 ### **R specific**
 
-control+1 - move cursor to editor (from console)
+**control+1:** move cursor to editor (from console)
 
-control+2 - move cursor to console (from editor)
+**control+2:** move cursor to console (from editor)
 
 ### **Links/References**

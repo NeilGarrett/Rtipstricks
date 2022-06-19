@@ -1,14 +1,19 @@
 ---
 title: "ggplot_tickstricks"
 output: html_notebook
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ### clear environment
+
 ```{r}
 rm(list = ls())
 ```
 
 ### load packages (install in you don't have)
+
 ```{r}
 library(data.table)
 library(Lahman) #has data sets
@@ -16,3 +21,211 @@ library(colourpicker) #addin useful for selecting colours
 library(cowplot) #theme for plotting
 library(data.table) #package for manipulating and computing on data
 ```
+
+### load in data
+
+Use Allstar full from Lahman package which has baseball stats. Pitching
+is another data set that comes with Lahman and is more comprehensive.
+
+need to copy and then convert the data to a data table
+
+```{r}
+dat = copy(AllstarFull)
+class(dat)
+setDT(dat)
+class(dat)
+```
+
+Columns in Allstar are as follows:
+
+-   **playerID:** Player ID code
+
+-   **yearID:** Year
+
+-   **gameNum:** Game number (for years in which more than one game was
+    played)
+
+-   **gameID:** Game ID code
+
+-   **teamID:** Team; a factor
+
+-   **lgID:** League; a factor with levels AL NL
+
+-   **GP:** Game played (zero if player did not appear in game)
+
+-   **startingPos:** If the player started, what position he played
+
+```{r}
+head(dat)
+str(dat)
+```
+
+**Core elements of a ggplot plot:**
+
+(compiled from: <https://ourcodingclub.github.io/tutorials/datavis/>)
+
+**geom**
+
+A geometric object which defines the type of graph you are making.
+
+It reads your data in the aesthetics mapping to know which variables to
+use, and creates the graph accordingly.
+
+Some common types are:
+
+-   geom_point()
+
+-   geom_boxplot()
+
+-   geom_histogram()
+
+-   geom_col()
+
+**aes**
+
+short for aesthetics.
+
+Usually placed within a geom\_, this is where you specify your data
+source and variables, AND the properties of the graph which depend on
+those variables.
+
+For instance, if you want all data points to be the same colour, you
+would define the 'colour =' argument outside the aes() function; if you
+want the data points to be coloured by a factor's levels (e.g. by site
+or species), you specify the colour = argument inside the aes().
+
+Some common things to include here are:
+
+-   x
+
+-   y
+
+-   fill
+
+-   colour
+
+-   size
+
+-   shape
+
+**stat**
+
+a stat layer applies some statistical transformation to the underlying
+data: for instance, stat_smooth(method = 'lm') displays a linear
+regression line and confidence interval ribbon on top of a scatter plot
+(defined with geom_point()).
+
+**theme**
+
+A set of visual parameters that control the background, borders, grid
+lines, axes, text size, legend position, etc.
+
+You can use pre-defined themes (e.g., theme_complot() from the cowplot
+package), create your own, or use a predefined theme and overwrite only
+the elements you don't like.
+
+Examples of elements within themes are:
+
+-   **axis.text**
+
+e.g., axis.text.y = element_text(size = 12)
+
+e.g., axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust
+= 1)
+
+[makes the x labels at an angle]
+
+-   **axis.title**
+
+e.g., axis.title = element_text(size = 14, face = "plain")
+
+-   **panel.grid**
+
+e.g., panel.grid = element_blank()
+
+[Removes the background grid lines]
+
+-   **plot.margin**
+
+e.g., plot.margin = unit(c(1,1,1,1), units = , "cm")
+
+[Adds a 1cm margin around the plot]
+
+-   **legend text**
+
+e.g., legend.text = element_text(size = 12, face = "italic")
+
+[Setting the font for the legend text]
+
+-   **legend.title**
+
+e.g., legend.title = element_blank()
+
+[Remove the legend title - useful as sometimes this is excessive and the
+default is to include it]
+
+-   **legend position**
+
+e.g., legend.position = c(0.9, 0.9)))
+
+-   **putting it all together...**
+
++theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1,
+hjust = 1),
+
+axis.text.y = element_text(size = 12),
+
+axis.title = element_text(size = 14, face = "plain"),
+
+panel.grid = element_blank(),
+
+plot.margin = unit(c(1,1,1,1), units = , "cm"),
+
+legend.text = element_text(size = 12, face = "italic"),
+
+legend.title = element_blank(),
+
+legend.position = c(0.9, 0.9))
+
+You define their properties with elements\_...() functions. For example:
+
+element_blank() would return something empty (ideal for removing
+background colour),
+
+element_text(size = ..., face = ..., angle = ...) lets you control all
+kinds of text properties.
+
+\# theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1,
+hjust = 1), \# making the years at a bit of an angle
+
+```{r}
+#try a plot of home runs over year
+ggplot(dat, aes(x=yearID, y=H))+geom_point()
+#equivalent to
+ggplot(dat)+geom_point(aes(x=yearID, y=H))
+```
+
+### **bar plots**
+
+### **bar plots with error bars and individual data points**
+
+A special subcategory as this is the most common plot I end up having to
+do.
+
+**Note on data wrangling**
+
+### **box plots**
+
+### **Resources/Links**
+
+Non exhaustive list of links/resources I've used in the course of
+compiling this are:
+
+<https://rafalab.github.io/dsbook/ggplot2.html>
+
+<http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html>
+
+<https://ourcodingclub.github.io/tutorials/datavis/>
+<https://ourcodingclub.github.io/tutorials/data-vis-2/>
+
+<https://ourcodingclub.github.io/tutorials/qualitative/>

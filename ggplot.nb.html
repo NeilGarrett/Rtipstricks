@@ -1782,17 +1782,208 @@ pre code {
 <h3>load packages (install in you don’t have)</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkYXRhLnRhYmxlKVxubGlicmFyeShMYWhtYW4pICNoYXMgZGF0YSBzZXRzXG5saWJyYXJ5KGNvbG91cnBpY2tlcikgI2FkZGluIHVzZWZ1bCBmb3Igc2VsZWN0aW5nIGNvbG91cnNcbmxpYnJhcnkoY293cGxvdCkgI3RoZW1lIGZvciBwbG90dGluZ1xubGlicmFyeShkYXRhLnRhYmxlKSAjcGFja2FnZSBmb3IgbWFuaXB1bGF0aW5nIGFuZCBjb21wdXRpbmcgb24gZGF0YVxuYGBgIn0= -->
-<pre class="r"><code>library(data.table)
-library(Lahman) #has data sets
-library(colourpicker) #addin useful for selecting colours
-library(cowplot) #theme for plotting
-library(data.table) #package for manipulating and computing on data</code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="load-in-data" class="section level3">
+<h3>load in data</h3>
+<p>Use Allstar full from Lahman package which has baseball stats.
+Pitching is another data set that comes with Lahman and is more
+comprehensive.</p>
+<p>need to copy and then convert the data to a data table</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZGF0KVxuXG5gYGAifQ== -->
+<pre class="r"><code>class(dat)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiZGF0YS50YWJsZVwiIFwiZGF0YS5mcmFtZVwiXG4ifQ== -->
+<pre><code>[1] &quot;data.table&quot; &quot;data.frame&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Columns in Allstar are as follows:</p>
+<ul>
+<li><p><strong>playerID:</strong> Player ID code</p></li>
+<li><p><strong>yearID:</strong> Year</p></li>
+<li><p><strong>gameNum:</strong> Game number (for years in which more
+than one game was played)</p></li>
+<li><p><strong>gameID:</strong> Game ID code</p></li>
+<li><p><strong>teamID:</strong> Team; a factor</p></li>
+<li><p><strong>lgID:</strong> League; a factor with levels AL
+NL</p></li>
+<li><p><strong>GP:</strong> Game played (zero if player did not appear
+in game)</p></li>
+<li><p><strong>startingPos:</strong> If the player started, what
+position he played</p></li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVhZChkYXQpXG5gYGAifQ== -->
+<pre class="r"><code>head(dat)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEudGFibGUiLCJkYXRhLmZyYW1lIl0sIm5yb3ciOjYsIm5jb2wiOjgsInN1bW1hcnkiOnsiRGVzY3JpcHRpb24iOlsiZGF0YS50YWJsZVssOF0gWzYgw5cgOF0iXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBNzJVUzIvYVFCREhGeHVIUjVzbVVtNzlDRlZCdUVoOUhCMGVBY1hGQ0JPRkhyZG1NVTZNamRhbURUMzFDL1FMOXhDNnhyc3pCaVh0clVpRGZ6czdzelB6OThLa08ydlhaM1ZDaUU3S3duUkRJREZ1cHYzR1IwTEttbGlVeEVZdGV6NklvQXNCVldIbndrN2tSczJQVit4SHlGcW1jaXdZNTR3SDZQRFprZ2RoZk9Ud2x1aVliKzlaY2xkSThYZ2NCWGRaQ2lHbisycWs4dXRwVS92UGZvcmR2clJzMS96VWJyYyt0TjYzL291UDZLcS8xOExLOG5rcWxYeHpKUE5KeUw2eE1KRmR2NVZlM1pvTUFhZTJ3a3NMMFhFQkp3NmdPMUxZd2RqT3dFTEVnQ0dpM1FOMElLM2JteXJzMjFCaTROd292TzZZaUZEQ3Rnb0lKVDRQTFVRYkVRTnNSQWR3OU1WRXRCQWh3TEd1Rlk1eHpQRUE1QnNQWVFxM0MybHV6MFNFTkxlUEFUWjZzYlBwSlhpbnZSbWdNMUY0YThGcnVYVk54SGVJbzZNYllIZ2hUZFFGZ0d1eG9GNGFjMEdQaFF0VmV0cXk0N1NkUEVHVEoyancvcldSbmNmb3U3OVZJZitvY3JDZkRhREw2MjNrL29PaGFqeiszb3pvaWlVeVVmc3B2bmE3M2U5bldxblBhVXFiQ3k1U2p2VlJ4NXp2ZjBLNXM3b082WmJ4WVZkTnNtVVVWeFZmcEl3Mks3V1pMVEUwWlhRRnEzTG9BMnRYWTBrdmtwVHlOSWo4Y1p6azZoeTBWSW5YYVJCSFlrdTdrQUlVWnlueEk4ZlpKc3FHbURlODVTYTZiMlQvY1hVcEpKSDZsS1M0aXF0NVNVUHBaS2p1V2VRSEVWUGFoUFFyQytYaWxkQjhyMVZ6ellNb1ZjSUtiOUpNNDVTcXVMb1hoOHFUdi9uSFA5eFRYTnNZQmdBQSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["playerID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["yearID"],"name":[2],"type":["int"],"align":["right"]},{"label":["gameNum"],"name":[3],"type":["int"],"align":["right"]},{"label":["gameID"],"name":[4],"type":["chr"],"align":["left"]},{"label":["teamID"],"name":[5],"type":["fctr"],"align":["left"]},{"label":["lgID"],"name":[6],"type":["fctr"],"align":["left"]},{"label":["GP"],"name":[7],"type":["int"],"align":["right"]},{"label":["startingPos"],"name":[8],"type":["int"],"align":["right"]}],"data":[{"1":"gomezle01","2":"1933","3":"0","4":"ALS193307060","5":"NYA","6":"AL","7":"1","8":"1"},{"1":"ferreri01","2":"1933","3":"0","4":"ALS193307060","5":"BOS","6":"AL","7":"1","8":"2"},{"1":"gehrilo01","2":"1933","3":"0","4":"ALS193307060","5":"NYA","6":"AL","7":"1","8":"3"},{"1":"gehrich01","2":"1933","3":"0","4":"ALS193307060","5":"DET","6":"AL","7":"1","8":"4"},{"1":"dykesji01","2":"1933","3":"0","4":"ALS193307060","5":"CHA","6":"AL","7":"1","8":"5"},{"1":"cronijo01","2":"1933","3":"0","4":"ALS193307060","5":"WS1","6":"AL","7":"1","8":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGRhdClcbmBgYCJ9 -->
+<pre class="r"><code>str(dat)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyDigJhkYXRhLnRhYmxl4oCZIGFuZCAnZGF0YS5mcmFtZSc6XHQ1Mzc1IG9icy4gb2YgIDggdmFyaWFibGVzOlxuICQgcGxheWVySUQgICA6IGNociAgXCJnb21lemxlMDFcIiBcImZlcnJlcmkwMVwiIFwiZ2VocmlsbzAxXCIgXCJnZWhyaWNoMDFcIiAuLi5cbiAkIHllYXJJRCAgICAgOiBpbnQgIDE5MzMgMTkzMyAxOTMzIDE5MzMgMTkzMyAxOTMzIDE5MzMgMTkzMyAxOTMzIDE5MzMgLi4uXG4gJCBnYW1lTnVtICAgIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgZ2FtZUlEICAgICA6IGNociAgXCJBTFMxOTMzMDcwNjBcIiBcIkFMUzE5MzMwNzA2MFwiIFwiQUxTMTkzMzA3MDYwXCIgXCJBTFMxOTMzMDcwNjBcIiAuLi5cbiAkIHRlYW1JRCAgICAgOiBGYWN0b3Igdy8gNDQgbGV2ZWxzIFwiQVJJXCIsXCJBVExcIixcIkJBTFwiLC4uOiAyNiA0IDI2IDEzIDggNDIgNDIgOCAyNiAxMSAuLi5cbiAkIGxnSUQgICAgICAgOiBGYWN0b3Igdy8gMiBsZXZlbHMgXCJBTFwiLFwiTkxcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEdQICAgICAgICAgOiBpbnQgIDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBzdGFydGluZ1BvczogaW50ICAxIDIgMyA0IDUgNiA3IDggOSBOQSAuLi5cbiAtIGF0dHIoKiwgXCIuaW50ZXJuYWwuc2VsZnJlZlwiKT08ZXh0ZXJuYWxwdHI+IFxuIn0= -->
+<pre><code>Classes ‘data.table’ and &#39;data.frame&#39;:  5375 obs. of  8 variables:
+ $ playerID   : chr  &quot;gomezle01&quot; &quot;ferreri01&quot; &quot;gehrilo01&quot; &quot;gehrich01&quot; ...
+ $ yearID     : int  1933 1933 1933 1933 1933 1933 1933 1933 1933 1933 ...
+ $ gameNum    : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ gameID     : chr  &quot;ALS193307060&quot; &quot;ALS193307060&quot; &quot;ALS193307060&quot; &quot;ALS193307060&quot; ...
+ $ teamID     : Factor w/ 44 levels &quot;ARI&quot;,&quot;ATL&quot;,&quot;BAL&quot;,..: 26 4 26 13 8 42 42 8 26 11 ...
+ $ lgID       : Factor w/ 2 levels &quot;AL&quot;,&quot;NL&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ GP         : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ startingPos: int  1 2 3 4 5 6 7 8 9 NA ...
+ - attr(*, &quot;.internal.selfref&quot;)=&lt;externalptr&gt; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><strong>Core elements of a ggplot plot:</strong></p>
+<p>(compiled from: <a href="https://ourcodingclub.github.io/tutorials/datavis/" class="uri">https://ourcodingclub.github.io/tutorials/datavis/</a>)</p>
+<p><strong>geom</strong></p>
+<p>A geometric object which defines the type of graph you are
+making.</p>
+<p>It reads your data in the aesthetics mapping to know which variables
+to use, and creates the graph accordingly.</p>
+<p>Some common types are:</p>
+<ul>
+<li><p>geom_point()</p></li>
+<li><p>geom_boxplot()</p></li>
+<li><p>geom_histogram()</p></li>
+<li><p>geom_col()</p></li>
+</ul>
+<p><strong>aes</strong></p>
+<p>short for aesthetics.</p>
+<p>Usually placed within a geom_, this is where you specify your data
+source and variables, AND the properties of the graph which depend on
+those variables.</p>
+<p>For instance, if you want all data points to be the same colour, you
+would define the ‘colour =’ argument outside the aes() function; if you
+want the data points to be coloured by a factor’s levels (e.g. by site
+or species), you specify the colour = argument inside the aes().</p>
+<p>Some common things to include here are:</p>
+<ul>
+<li><p>x</p></li>
+<li><p>y</p></li>
+<li><p>fill</p></li>
+<li><p>colour</p></li>
+<li><p>size</p></li>
+<li><p>shape</p></li>
+</ul>
+<p><strong>stat</strong></p>
+<p>a stat layer applies some statistical transformation to the
+underlying data: for instance, stat_smooth(method = ‘lm’) displays a
+linear regression line and confidence interval ribbon on top of a
+scatter plot (defined with geom_point()).</p>
+<p><strong>theme</strong></p>
+<p>A set of visual parameters that control the background, borders, grid
+lines, axes, text size, legend position, etc.</p>
+<p>You can use pre-defined themes (e.g., theme_complot() from the
+cowplot package), create your own, or use a predefined theme and
+overwrite only the elements you don’t like.</p>
+<p>Examples of elements within themes are:</p>
+<ul>
+<li><strong>axis.text</strong></li>
+</ul>
+<p>e.g., axis.text.y = element_text(size = 12)</p>
+<p>e.g., axis.text.x = element_text(size = 12, angle = 45, vjust = 1,
+hjust = 1)</p>
+<p>[makes the x labels at an angle]</p>
+<ul>
+<li><strong>axis.title</strong></li>
+</ul>
+<p>e.g., axis.title = element_text(size = 14, face = “plain”)</p>
+<ul>
+<li><strong>panel.grid</strong></li>
+</ul>
+<p>e.g., panel.grid = element_blank()</p>
+<p>[Removes the background grid lines]</p>
+<ul>
+<li><strong>plot.margin</strong></li>
+</ul>
+<p>e.g., plot.margin = unit(c(1,1,1,1), units = , “cm”)</p>
+<p>[Adds a 1cm margin around the plot]</p>
+<ul>
+<li><strong>legend text</strong></li>
+</ul>
+<p>e.g., legend.text = element_text(size = 12, face = “italic”)</p>
+<p>[Setting the font for the legend text]</p>
+<ul>
+<li><strong>legend.title</strong></li>
+</ul>
+<p>e.g., legend.title = element_blank()</p>
+<p>[Remove the legend title - useful as sometimes this is excessive and
+the default is to include it]</p>
+<ul>
+<li><strong>legend position</strong></li>
+</ul>
+<p>e.g., legend.position = c(0.9, 0.9)))</p>
+<ul>
+<li><strong>putting it all together…</strong></li>
+</ul>
+<p>+theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1,
+hjust = 1),</p>
+<p>axis.text.y = element_text(size = 12),</p>
+<p>axis.title = element_text(size = 14, face = “plain”),</p>
+<p>panel.grid = element_blank(),</p>
+<p>plot.margin = unit(c(1,1,1,1), units = , “cm”),</p>
+<p>legend.text = element_text(size = 12, face = “italic”),</p>
+<p>legend.title = element_blank(),</p>
+<p>legend.position = c(0.9, 0.9))</p>
+<p>You define their properties with elements_…() functions. For
+example:</p>
+<p>element_blank() would return something empty (ideal for removing
+background colour),</p>
+<p>element_text(size = …, face = …, angle = …) lets you control all
+kinds of text properties.</p>
+<p># theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1,
+hjust = 1), # making the years at a bit of an angle</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2VxdWl2YWxlbnQgdG9cbmdncGxvdChkYXQpK2dlb21fcG9pbnQoYWVzKHg9eWVhcklELCB5PUgpKVxuXG5gYGAifQ== -->
+<pre class="r"><code>#equivalent to
+ggplot(dat)+geom_point(aes(x=yearID, y=H))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gZ2dwbG90KGRhdCkgOiBjb3VsZCBub3QgZmluZCBmdW5jdGlvbiBcImdncGxvdFwiXG4ifQ== -->
+<pre><code>Error in ggplot(dat) : could not find function &quot;ggplot&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="bar-plots" class="section level3">
+<h3><strong>bar plots</strong></h3>
+</div>
+<div id="bar-plots-with-error-bars-and-individual-data-points" class="section level3">
+<h3><strong>bar plots with error bars and individual data
+points</strong></h3>
+<p>A special subcategory as this is the most common plot I end up having
+to do.</p>
+<p><strong>Note on data wrangling</strong></p>
+</div>
+<div id="box-plots" class="section level3">
+<h3><strong>box plots</strong></h3>
+</div>
+<div id="resourceslinks" class="section level3">
+<h3><strong>Resources/Links</strong></h3>
+<p>Non exhaustive list of links/resources I’ve used in the course of
+compiling this are:</p>
+<p><a href="https://rafalab.github.io/dsbook/ggplot2.html" class="uri">https://rafalab.github.io/dsbook/ggplot2.html</a></p>
+<p><a href="http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html" class="uri">http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html</a></p>
+<p><a href="https://ourcodingclub.github.io/tutorials/datavis/" class="uri">https://ourcodingclub.github.io/tutorials/datavis/</a> <a href="https://ourcodingclub.github.io/tutorials/data-vis-2/" class="uri">https://ourcodingclub.github.io/tutorials/data-vis-2/</a></p>
+<p><a href="https://ourcodingclub.github.io/tutorials/qualitative/" class="uri">https://ourcodingclub.github.io/tutorials/qualitative/</a></p>
+<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiZ2dwbG90X3RpY2tzdHJpY2tzIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIyMgY2xlYXIgZW52aXJvbm1lbnQKYGBge3J9CnJtKGxpc3QgPSBscygpKQpgYGAKCiMjIyBsb2FkIHBhY2thZ2VzIChpbnN0YWxsIGluIHlvdSBkb24ndCBoYXZlKQpgYGB7cn0KbGlicmFyeShkYXRhLnRhYmxlKQpsaWJyYXJ5KExhaG1hbikgI2hhcyBkYXRhIHNldHMKbGlicmFyeShjb2xvdXJwaWNrZXIpICNhZGRpbiB1c2VmdWwgZm9yIHNlbGVjdGluZyBjb2xvdXJzCmxpYnJhcnkoY293cGxvdCkgI3RoZW1lIGZvciBwbG90dGluZwpsaWJyYXJ5KGRhdGEudGFibGUpICNwYWNrYWdlIGZvciBtYW5pcHVsYXRpbmcgYW5kIGNvbXB1dGluZyBvbiBkYXRhCmBgYA==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiZ2dwbG90X3RpY2tzdHJpY2tzIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKZWRpdG9yX29wdGlvbnM6IAogIG1hcmtkb3duOiAKICAgIHdyYXA6IDcyCi0tLQoKIyMjIGNsZWFyIGVudmlyb25tZW50CgpgYGB7cn0Kcm0obGlzdCA9IGxzKCkpCmBgYAoKIyMjIGxvYWQgcGFja2FnZXMgKGluc3RhbGwgaW4geW91IGRvbid0IGhhdmUpCgpgYGB7cn0KbGlicmFyeShkYXRhLnRhYmxlKQpsaWJyYXJ5KExhaG1hbikgI2hhcyBkYXRhIHNldHMKbGlicmFyeShjb2xvdXJwaWNrZXIpICNhZGRpbiB1c2VmdWwgZm9yIHNlbGVjdGluZyBjb2xvdXJzCmxpYnJhcnkoY293cGxvdCkgI3RoZW1lIGZvciBwbG90dGluZwpsaWJyYXJ5KGRhdGEudGFibGUpICNwYWNrYWdlIGZvciBtYW5pcHVsYXRpbmcgYW5kIGNvbXB1dGluZyBvbiBkYXRhCmBgYAoKIyMjIGxvYWQgaW4gZGF0YQoKVXNlIEFsbHN0YXIgZnVsbCBmcm9tIExhaG1hbiBwYWNrYWdlIHdoaWNoIGhhcyBiYXNlYmFsbCBzdGF0cy4gUGl0Y2hpbmcKaXMgYW5vdGhlciBkYXRhIHNldCB0aGF0IGNvbWVzIHdpdGggTGFobWFuIGFuZCBpcyBtb3JlIGNvbXByZWhlbnNpdmUuCgpuZWVkIHRvIGNvcHkgYW5kIHRoZW4gY29udmVydCB0aGUgZGF0YSB0byBhIGRhdGEgdGFibGUKCmBgYHtyfQpkYXQgPSBjb3B5KEFsbHN0YXJGdWxsKQpjbGFzcyhkYXQpCnNldERUKGRhdCkKY2xhc3MoZGF0KQpgYGAKCkNvbHVtbnMgaW4gQWxsc3RhciBhcmUgYXMgZm9sbG93czoKCi0gICAqKnBsYXllcklEOioqIFBsYXllciBJRCBjb2RlCgotICAgKip5ZWFySUQ6KiogWWVhcgoKLSAgICoqZ2FtZU51bToqKiBHYW1lIG51bWJlciAoZm9yIHllYXJzIGluIHdoaWNoIG1vcmUgdGhhbiBvbmUgZ2FtZSB3YXMKICAgIHBsYXllZCkKCi0gICAqKmdhbWVJRDoqKiBHYW1lIElEIGNvZGUKCi0gICAqKnRlYW1JRDoqKiBUZWFtOyBhIGZhY3RvcgoKLSAgICoqbGdJRDoqKiBMZWFndWU7IGEgZmFjdG9yIHdpdGggbGV2ZWxzIEFMIE5MCgotICAgKipHUDoqKiBHYW1lIHBsYXllZCAoemVybyBpZiBwbGF5ZXIgZGlkIG5vdCBhcHBlYXIgaW4gZ2FtZSkKCi0gICAqKnN0YXJ0aW5nUG9zOioqIElmIHRoZSBwbGF5ZXIgc3RhcnRlZCwgd2hhdCBwb3NpdGlvbiBoZSBwbGF5ZWQKCmBgYHtyfQpoZWFkKGRhdCkKc3RyKGRhdCkKYGBgCgoqKkNvcmUgZWxlbWVudHMgb2YgYSBnZ3Bsb3QgcGxvdDoqKgoKKGNvbXBpbGVkIGZyb206IDxodHRwczovL291cmNvZGluZ2NsdWIuZ2l0aHViLmlvL3R1dG9yaWFscy9kYXRhdmlzLz4pCgoqKmdlb20qKgoKQSBnZW9tZXRyaWMgb2JqZWN0IHdoaWNoIGRlZmluZXMgdGhlIHR5cGUgb2YgZ3JhcGggeW91IGFyZSBtYWtpbmcuCgpJdCByZWFkcyB5b3VyIGRhdGEgaW4gdGhlIGFlc3RoZXRpY3MgbWFwcGluZyB0byBrbm93IHdoaWNoIHZhcmlhYmxlcyB0bwp1c2UsIGFuZCBjcmVhdGVzIHRoZSBncmFwaCBhY2NvcmRpbmdseS4KClNvbWUgY29tbW9uIHR5cGVzIGFyZToKCi0gICBnZW9tX3BvaW50KCkKCi0gICBnZW9tX2JveHBsb3QoKQoKLSAgIGdlb21faGlzdG9ncmFtKCkKCi0gICBnZW9tX2NvbCgpCgoqKmFlcyoqCgpzaG9ydCBmb3IgYWVzdGhldGljcy4KClVzdWFsbHkgcGxhY2VkIHdpdGhpbiBhIGdlb21cXywgdGhpcyBpcyB3aGVyZSB5b3Ugc3BlY2lmeSB5b3VyIGRhdGEKc291cmNlIGFuZCB2YXJpYWJsZXMsIEFORCB0aGUgcHJvcGVydGllcyBvZiB0aGUgZ3JhcGggd2hpY2ggZGVwZW5kIG9uCnRob3NlIHZhcmlhYmxlcy4KCkZvciBpbnN0YW5jZSwgaWYgeW91IHdhbnQgYWxsIGRhdGEgcG9pbnRzIHRvIGJlIHRoZSBzYW1lIGNvbG91ciwgeW91CndvdWxkIGRlZmluZSB0aGUgJ2NvbG91ciA9JyBhcmd1bWVudCBvdXRzaWRlIHRoZSBhZXMoKSBmdW5jdGlvbjsgaWYgeW91CndhbnQgdGhlIGRhdGEgcG9pbnRzIHRvIGJlIGNvbG91cmVkIGJ5IGEgZmFjdG9yJ3MgbGV2ZWxzIChlLmcuIGJ5IHNpdGUKb3Igc3BlY2llcyksIHlvdSBzcGVjaWZ5IHRoZSBjb2xvdXIgPSBhcmd1bWVudCBpbnNpZGUgdGhlIGFlcygpLgoKU29tZSBjb21tb24gdGhpbmdzIHRvIGluY2x1ZGUgaGVyZSBhcmU6CgotICAgeAoKLSAgIHkKCi0gICBmaWxsCgotICAgY29sb3VyCgotICAgc2l6ZQoKLSAgIHNoYXBlCgoqKnN0YXQqKgoKYSBzdGF0IGxheWVyIGFwcGxpZXMgc29tZSBzdGF0aXN0aWNhbCB0cmFuc2Zvcm1hdGlvbiB0byB0aGUgdW5kZXJseWluZwpkYXRhOiBmb3IgaW5zdGFuY2UsIHN0YXRfc21vb3RoKG1ldGhvZCA9ICdsbScpIGRpc3BsYXlzIGEgbGluZWFyCnJlZ3Jlc3Npb24gbGluZSBhbmQgY29uZmlkZW5jZSBpbnRlcnZhbCByaWJib24gb24gdG9wIG9mIGEgc2NhdHRlciBwbG90CihkZWZpbmVkIHdpdGggZ2VvbV9wb2ludCgpKS4KCioqdGhlbWUqKgoKQSBzZXQgb2YgdmlzdWFsIHBhcmFtZXRlcnMgdGhhdCBjb250cm9sIHRoZSBiYWNrZ3JvdW5kLCBib3JkZXJzLCBncmlkCmxpbmVzLCBheGVzLCB0ZXh0IHNpemUsIGxlZ2VuZCBwb3NpdGlvbiwgZXRjLgoKWW91IGNhbiB1c2UgcHJlLWRlZmluZWQgdGhlbWVzIChlLmcuLCB0aGVtZV9jb21wbG90KCkgZnJvbSB0aGUgY293cGxvdApwYWNrYWdlKSwgY3JlYXRlIHlvdXIgb3duLCBvciB1c2UgYSBwcmVkZWZpbmVkIHRoZW1lIGFuZCBvdmVyd3JpdGUgb25seQp0aGUgZWxlbWVudHMgeW91IGRvbid0IGxpa2UuCgpFeGFtcGxlcyBvZiBlbGVtZW50cyB3aXRoaW4gdGhlbWVzIGFyZToKCi0gICAqKmF4aXMudGV4dCoqCgplLmcuLCBheGlzLnRleHQueSA9IGVsZW1lbnRfdGV4dChzaXplID0gMTIpCgplLmcuLCBheGlzLnRleHQueCA9IGVsZW1lbnRfdGV4dChzaXplID0gMTIsIGFuZ2xlID0gNDUsIHZqdXN0ID0gMSwgaGp1c3QKPSAxKQoKW21ha2VzIHRoZSB4IGxhYmVscyBhdCBhbiBhbmdsZV0KCi0gICAqKmF4aXMudGl0bGUqKgoKZS5nLiwgYXhpcy50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplID0gMTQsIGZhY2UgPSAicGxhaW4iKQoKLSAgICoqcGFuZWwuZ3JpZCoqCgplLmcuLCBwYW5lbC5ncmlkID0gZWxlbWVudF9ibGFuaygpCgpbUmVtb3ZlcyB0aGUgYmFja2dyb3VuZCBncmlkIGxpbmVzXQoKLSAgICoqcGxvdC5tYXJnaW4qKgoKZS5nLiwgcGxvdC5tYXJnaW4gPSB1bml0KGMoMSwxLDEsMSksIHVuaXRzID0gLCAiY20iKQoKW0FkZHMgYSAxY20gbWFyZ2luIGFyb3VuZCB0aGUgcGxvdF0KCi0gICAqKmxlZ2VuZCB0ZXh0KioKCmUuZy4sIGxlZ2VuZC50ZXh0ID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMiwgZmFjZSA9ICJpdGFsaWMiKQoKW1NldHRpbmcgdGhlIGZvbnQgZm9yIHRoZSBsZWdlbmQgdGV4dF0KCi0gICAqKmxlZ2VuZC50aXRsZSoqCgplLmcuLCBsZWdlbmQudGl0bGUgPSBlbGVtZW50X2JsYW5rKCkKCltSZW1vdmUgdGhlIGxlZ2VuZCB0aXRsZSAtIHVzZWZ1bCBhcyBzb21ldGltZXMgdGhpcyBpcyBleGNlc3NpdmUgYW5kIHRoZQpkZWZhdWx0IGlzIHRvIGluY2x1ZGUgaXRdCgotICAgKipsZWdlbmQgcG9zaXRpb24qKgoKZS5nLiwgbGVnZW5kLnBvc2l0aW9uID0gYygwLjksIDAuOSkpKQoKLSAgICoqcHV0dGluZyBpdCBhbGwgdG9nZXRoZXIuLi4qKgoKK3RoZW1lKGF4aXMudGV4dC54ID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMiwgYW5nbGUgPSA0NSwgdmp1c3QgPSAxLApoanVzdCA9IDEpLAoKYXhpcy50ZXh0LnkgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDEyKSwKCmF4aXMudGl0bGUgPSBlbGVtZW50X3RleHQoc2l6ZSA9IDE0LCBmYWNlID0gInBsYWluIiksCgpwYW5lbC5ncmlkID0gZWxlbWVudF9ibGFuaygpLAoKcGxvdC5tYXJnaW4gPSB1bml0KGMoMSwxLDEsMSksIHVuaXRzID0gLCAiY20iKSwKCmxlZ2VuZC50ZXh0ID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMiwgZmFjZSA9ICJpdGFsaWMiKSwKCmxlZ2VuZC50aXRsZSA9IGVsZW1lbnRfYmxhbmsoKSwKCmxlZ2VuZC5wb3NpdGlvbiA9IGMoMC45LCAwLjkpKQoKWW91IGRlZmluZSB0aGVpciBwcm9wZXJ0aWVzIHdpdGggZWxlbWVudHNcXy4uLigpIGZ1bmN0aW9ucy4gRm9yIGV4YW1wbGU6CgplbGVtZW50X2JsYW5rKCkgd291bGQgcmV0dXJuIHNvbWV0aGluZyBlbXB0eSAoaWRlYWwgZm9yIHJlbW92aW5nCmJhY2tncm91bmQgY29sb3VyKSwKCmVsZW1lbnRfdGV4dChzaXplID0gLi4uLCBmYWNlID0gLi4uLCBhbmdsZSA9IC4uLikgbGV0cyB5b3UgY29udHJvbCBhbGwKa2luZHMgb2YgdGV4dCBwcm9wZXJ0aWVzLgoKXCMgdGhlbWUoYXhpcy50ZXh0LnggPSBlbGVtZW50X3RleHQoc2l6ZSA9IDEyLCBhbmdsZSA9IDQ1LCB2anVzdCA9IDEsCmhqdXN0ID0gMSksIFwjIG1ha2luZyB0aGUgeWVhcnMgYXQgYSBiaXQgb2YgYW4gYW5nbGUKCmBgYHtyfQojdHJ5IGEgcGxvdCBvZiBob21lIHJ1bnMgb3ZlciB5ZWFyCmdncGxvdChkYXQsIGFlcyh4PXllYXJJRCwgeT1IKSkrZ2VvbV9wb2ludCgpCiNlcXVpdmFsZW50IHRvCmdncGxvdChkYXQpK2dlb21fcG9pbnQoYWVzKHg9eWVhcklELCB5PUgpKQpgYGAKCiMjIyAqKmJhciBwbG90cyoqCgojIyMgKipiYXIgcGxvdHMgd2l0aCBlcnJvciBiYXJzIGFuZCBpbmRpdmlkdWFsIGRhdGEgcG9pbnRzKioKCkEgc3BlY2lhbCBzdWJjYXRlZ29yeSBhcyB0aGlzIGlzIHRoZSBtb3N0IGNvbW1vbiBwbG90IEkgZW5kIHVwIGhhdmluZyB0bwpkby4KCioqTm90ZSBvbiBkYXRhIHdyYW5nbGluZyoqCgojIyMgKipib3ggcGxvdHMqKgoKIyMjICoqUmVzb3VyY2VzL0xpbmtzKioKCk5vbiBleGhhdXN0aXZlIGxpc3Qgb2YgbGlua3MvcmVzb3VyY2VzIEkndmUgdXNlZCBpbiB0aGUgY291cnNlIG9mCmNvbXBpbGluZyB0aGlzIGFyZToKCjxodHRwczovL3JhZmFsYWIuZ2l0aHViLmlvL2RzYm9vay9nZ3Bsb3QyLmh0bWw+Cgo8aHR0cDovL3Itc3RhdGlzdGljcy5jby9Db21wbGV0ZS1HZ3Bsb3QyLVR1dG9yaWFsLVBhcnQxLVdpdGgtUi1Db2RlLmh0bWw+Cgo8aHR0cHM6Ly9vdXJjb2RpbmdjbHViLmdpdGh1Yi5pby90dXRvcmlhbHMvZGF0YXZpcy8+CjxodHRwczovL291cmNvZGluZ2NsdWIuZ2l0aHViLmlvL3R1dG9yaWFscy9kYXRhLXZpcy0yLz4KCjxodHRwczovL291cmNvZGluZ2NsdWIuZ2l0aHViLmlvL3R1dG9yaWFscy9xdWFsaXRhdGl2ZS8+Cg==</div>
 
 
 
