@@ -16,57 +16,113 @@ rm(list = ls())
 
 ```{r}
 library(data.table)
-library(Lahman) #has data sets
 library(colourpicker) #addin useful for selecting colours
 library(cowplot) #theme for plotting
 library(data.table) #package for manipulating and computing on data
+library(raincloudplots) #https://wellcomeopenresearch.org/articles/4-63
+```
+
+### packages that have data sets in them
+
+```{r}
+library(Lahman) #has data sets related to baseball (Allstar and Pitching)
+library(palmerpenguins) #has data sets related to penguins (penguins)
+
 ```
 
 ### load in data
 
-Use Allstar full from Lahman package which has baseball stats. Pitching
-is another data set that comes with Lahman and is more comprehensive.
+AllstarFull from Lahman package has baseball stats.
 
-need to copy and then convert the data to a data table
+Pitching is another data set included with Lahman package and is more
+comprehensive.
+
+palmerpenguins package has data sets related to penguins.
+
+ggplot also has data set midwest included with it. Load this by doing
+*data("midwest", package = "ggplot2")*
+
+Need to copy and then convert the data to a data table
 
 ```{r}
-dat = copy(AllstarFull)
+dat = copy(Pitching)
 class(dat)
 setDT(dat)
 class(dat)
 ```
 
-Columns in Allstar are as follows:
-
--   **playerID:** Player ID code
-
--   **yearID:** Year
-
--   **gameNum:** Game number (for years in which more than one game was
-    played)
-
--   **gameID:** Game ID code
-
--   **teamID:** Team; a factor
-
--   **lgID:** League; a factor with levels AL NL
-
--   **GP:** Game played (zero if player did not appear in game)
-
--   **startingPos:** If the player started, what position he played
+examine data
 
 ```{r}
 head(dat)
 str(dat)
 ```
 
-**Core elements of a ggplot plot:**
+### **notes on data**
+
+**playerID:** Player ID code
+
+**yearID:** Year
+
+**stint:** player's stint (order of appearances within a season)
+
+**teamID:** Team (factor)
+
+**lgID:** League ID a factor with levels AA, AL, FL, NL, PL, UA
+
+**W:** Wins
+
+**L:** Losses
+
+**G:** Games
+
+**GS:** Games Started
+
+**CG:** Complete Games
+
+**SHO:** Shutouts
+
+**SV:** Saves IPouts Outs Pitched (innings pitched x 3)
+
+**H:** Hits
+
+**ER:** Earned Runs
+
+**HR:** Homeruns
+
+**BB:** Walks
+
+**SO:** Strikeouts
+
+**BAOpp:** Opponent's Batting Average
+
+**ERA:** Earned Run Average
+
+**IBB:** Intentional Walks
+
+**WP:** Wild Pitches
+
+**HBP:** Batters Hit By Pitch
+
+**BK:** Balks
+
+**BFP:** Batters faced by Pitcher
+
+**GF:** Games Finished R Runs Allowed
+
+**SH:** Sacrifices by opposing batters
+
+**SF:** Sacrifice flies by opposing batters
+
+**GIDP:** Grounded into double plays by opposing batter
+
+### **Core elements of a ggplot plot:**
 
 (compiled from: <https://ourcodingclub.github.io/tutorials/datavis/>)
 
 **geom**
 
-A geometric object which defines the type of graph you are making.
+Geometric object which defines the type of graph you are making.
 
 It reads your data in the aesthetics mapping to know which variables to
 use, and creates the graph accordingly.
@@ -83,18 +139,18 @@ Some common types are:
 
 **aes**
 
-short for aesthetics.
+Short for aesthetics.
 
 Usually placed within a geom\_, this is where you specify your data
 source and variables, AND the properties of the graph which depend on
 those variables.
 
 For instance, if you want all data points to be the same colour, you
-would define the 'colour =' argument outside the aes() function; if you
-want the data points to be coloured by a factor's levels (e.g. by site
-or species), you specify the colour = argument inside the aes().
+would define the 'colour =' argument *outside* the aes() function; if
+you want the data points to be coloured by a factor's levels (e.g. by
+site or species), you specify the colour = argument *inside* the aes().
 
-Some common things to include here are:
+Some common things to include in aes are:
 
 -   x
 
@@ -107,6 +163,9 @@ Some common things to include here are:
 -   size
 
 -   shape
+
+**But** note that different geoms have different aesthetics available
+(see cheatsheet below for example)
 
 **stat**
 
@@ -205,6 +264,218 @@ ggplot(dat, aes(x=yearID, y=H))+geom_point()
 ggplot(dat)+geom_point(aes(x=yearID, y=H))
 ```
 
+top tip: by encircling the ggplot in parenthesis () you get to assign a
+plot to a variable and plot it at the same time. useful if you want to
+save the plot or make it into a figure, refer to it later (e.g., replot,
+put in a panel with other figs) etc. Example here using the same plot as
+above
+
+```{r}
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)))
+```
+
+remove grey background with +theme_bw()
+
+```{r}
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + theme_bw())
+```
+
+many other themes are available
+
+```{r}
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + theme_classic())
+
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + theme_minimal())
+
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + theme_cowplot())
+```
+
+you can also create your own theme!
+
+Just write it as a function. Example here taken from:
+<https://rpubs.com/jenrichmond/W6LL>
+
+```{r}
+#library(data.table)
+#library(palmerpenguins)
+#library(cowplot)
+##library(ggplot)
+
+theme_jen <- function () {
+  
+  # define font up front
+  font <- "Helvetica"  
+  # this theme uses theme_bw as the base 
+  
+  theme_bw() %+replace%   
+    theme(
+      #get rid of grid lines/borders
+      panel.border = element_blank(), 
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(), 
+      # add white space top, right, bottom, left
+      plot.margin = unit(c(1, 1, 1, 1), "cm"), 
+      # custom axis title/text/lines
+      axis.title = element_text(            
+        family = font,                     
+        size = 14),               
+      axis.text = element_text(              
+        family = font,                       
+        size = 12),   
+      # margin pulls text away from axis
+      axis.text.x = element_text(           
+        margin=margin(5, b = 10)),
+      # black lines
+      axis.line = element_line(colour = "black", size = rel(1)), 
+      # custom plot titles, subtitles, captions
+      plot.title = element_text(             
+        family = font,              
+        size = 18,
+        hjust = -0.1,
+        vjust = 4),
+       # custom plot subtitles
+      plot.subtitle = element_text(          
+        family = font,                   
+        size = 14, 
+        hjust = 0,
+        vjust = 3),
+       # custom captions
+      plot.caption = element_text(           
+        family = font,                   
+        size = 10,
+        hjust = 1,
+        vjust = 2), 
+      # custom legend 
+      legend.title = element_text(          
+        family = font,           
+        size = 10,                
+        hjust = 0), 
+      legend.text = element_text(          
+        family = font,               
+        size = 8,                     
+        hjust = 0), 
+      #no background on legend
+      legend.key = element_blank(),   
+      # white background on plot
+      strip.background = element_rect(fill = "white",  
+                                      colour = "black", 
+                                      size = rel(2)), complete = TRUE)
+  
+}
+```
+
+```{r}
+#source("theme_jen.R") # the script/function containing custom ggplot theme
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + theme_jen())
+```
+
+add label to x and y axis plus add in various elements of theme
+
+```{r}
+(plot1 = ggplot(dat)+geom_point(aes(x=yearID, y=H)) + 
+theme_classic()+
+xlab('\nyear')+#\n adds blank line
+ylab('n home runs')+ #\nadds blank line
+theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1), # making the years at a bit of an angle
+axis.text.y = element_text(size = 12),
+axis.title = element_text(size = 14, face = "plain"),                        
+panel.grid = element_blank(),# Remove the background grid lines       
+plot.margin = unit(c(1,1,1,1), units = , "cm"), # Add a 1cm margin around the plot
+legend.text = element_text(size = 12, face = "italic"), # Setting the font for the legend text
+legend.title = element_blank(), # Removing the legend title
+      legend.position = c(0.9, 0.9)))
+```
+
+might be claner to do the same plot on mean H per year
+
+```{r}
+(plot1 = ggplot(dat[, .(H=mean(H)), by=yearID])+geom_point(aes(x=yearID, y=H)) + theme_classic()+
+    xlab('\nyear')+            
+    ylab('mean home runs per year')+          
+    theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1),     
+          axis.text.y = element_text(size = 12),
+          axis.title = element_text(size = 14, face = "plain"),                        
+          panel.grid = element_blank(),                                   
+          plot.margin = unit(c(1,1,1,1), units = , "cm"),                 
+          legend.text = element_text(size = 12, face = "italic"),         
+          legend.title = element_blank(),                                 
+          legend.position = c(0.9, 0.9)))
+```
+
+add a linear trendline using geom_smooth have to specficy method for
+this (method="lm" or method=lm is fine). se is added by default (can add
+se=F to disable this)
+
+```{r}
+(plot1 = ggplot(dat[, .(H=mean(H)), by=yearID], aes(x=yearID, y=H))+
+    geom_point()+
+    geom_smooth(method=lm)+
+    theme_classic()+
+    xlab('\nyear')+
+    ylab('mean home runs per year')+
+   theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1), axis.text.y = element_text(size = 12), axis.title = element_text(size = 14, face = "plain"), panel.grid = element_blank(),plot.margin = unit(c(1,1,1,1), units = , "cm"),             legend.text = element_text(size = 12, face = "italic"),       legend.title = element_blank(),legend.position = c(0.9, 0.9)))
+```
+
+you can also add a specific formula in geom_smooth (e.g., y\~x+x^2+x^3)
+
+```{r}
+(plot1 = ggplot(dat[, .(H=mean(H)), by=yearID], aes(x=yearID, y=H))+
+    geom_point()+
+    geom_smooth(formula=y~x+x^2+x^3)+
+    theme_classic()+
+    xlab('\nyear')+
+    ylab('mean home runs per year')+            
+    theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1),
+          axis.text.y = element_text(size = 12),
+          axis.title = element_text(size = 14, face = "plain"),
+          panel.grid = element_blank(),
+          plot.margin = unit(c(1,1,1,1), units = , "cm"),
+          legend.text = element_text(size = 12, face = "italic"),
+          legend.title = element_blank(),
+          legend.position = c(0.9, 0.9)))
+```
+
+facet wrap this can be used to easily plot data in panels (e.g., plot
+mean home runs over time for each leagueID - here I also distinguish
+leagues by colour)/ seeing scales = "free_y" below means the y axis can
+vary from plot to plot. You can also use `nrow =` or `ncol =` to specify
+the numbers of rows/columns
+
+```{r}
+dat$yearIDfact = as.factor(dat$yearID)
+
+(plot1 = ggplot(dat[, .(H=mean(H)), by=.(lgID, yearID)], aes(x=yearID, y=H, colour=lgID))+
+    geom_point()+
+    facet_wrap(vars(lgID), scales = "free_y")+
+    theme_classic()+
+    xlab('\nyear')+            #\n adds blank line
+    ylab('mean home runs per year'))
+```
+
+facet_grid does a similar thing but organised into columns of rows
+
+here use rows based on teamID
+
+```{r}
+(plot1 = ggplot(dat[, .(H=mean(H)), by=.(lgID, yearID)], aes(x=yearID, y=H, colour=lgID))+
+    geom_point()+
+    facet_grid(lgID ~ .)+
+    theme_classic()+
+    xlab('\nyear')+            #\n adds blank line
+    ylab('mean home runs per year'))
+```
+
+columns based on teamID
+
+```{r}
+(plot1 = ggplot(dat[, .(H=mean(H)), by=.(lgID, yearID)], aes(x=yearID, y=H, colour=lgID))+
+    geom_point()+
+    facet_grid(. ~ lgID)+
+    theme_classic()+
+    xlab('\nyear')+            #\n adds blank line
+    ylab('mean home runs per year'))
+```
+
 ### **bar plots**
 
 ### **bar plots with error bars and individual data points**
@@ -216,16 +487,26 @@ do.
 
 ### **box plots**
 
+### **exercises**
+
 ### **Resources/Links**
 
 Non exhaustive list of links/resources I've used in the course of
-compiling this are:
+compiling this notebook
+
+<https://rpubs.com/jenrichmond/W6LL>
 
 <https://rafalab.github.io/dsbook/ggplot2.html>
 
 <http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html>
 
 <https://ourcodingclub.github.io/tutorials/datavis/>
+
 <https://ourcodingclub.github.io/tutorials/data-vis-2/>
 
 <https://ourcodingclub.github.io/tutorials/qualitative/>
+
+### **ggplot cheatsheet**
+
+![ggplot cheatsheet](images/ggplot2-cheatsheeta.png) ![ggplot
+cheatsheet](images/ggplot2-cheatsheetb.png)
