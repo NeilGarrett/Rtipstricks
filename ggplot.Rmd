@@ -16,6 +16,8 @@ rm(list = ls())
 
 ```{r}
 library(data.table)
+library(ggplot2)
+library(ggdist)
 library(colourpicker) #addin useful for selecting colours
 library(cowplot) #theme for plotting
 library(data.table) #package for manipulating and computing on data
@@ -413,10 +415,10 @@ se=F to disable this)
     theme_classic()+
     xlab('\nyear')+
     ylab('mean home runs per year')+
-   theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1), axis.text.y = element_text(size = 12), axis.title = element_text(size = 14, face = "plain"), panel.grid = element_blank(),plot.margin = unit(c(1,1,1,1), units = , "cm"),             legend.text = element_text(size = 12, face = "italic"),       legend.title = element_blank(),legend.position = c(0.9, 0.9)))
+   theme(axis.text.x = element_text(size = 12, angle = 45, vjust = 1, hjust = 1), axis.text.y = element_text(size = 12), axis.title = element_text(size = 14, face = "plain"), panel.grid = element_blank(),plot.margin = unit(c(1,1,1,1), units = , "cm"), legend.text = element_text(size = 12, face = "italic"), legend.title = element_blank(),legend.position = c(0.9, 0.9)))
 ```
 
-you can also add a specific formula in geom_smooth (e.g., y\~x+x^2+x^3)
+you can also add a specific formula in geom_smooth (e.g., y~x+x^2+x^3)
 
 ```{r}
 (plot1 = ggplot(dat[, .(H=mean(H)), by=yearID], aes(x=yearID, y=H))+
@@ -475,6 +477,45 @@ columns based on teamID
     xlab('\nyear')+            #\n adds blank line
     ylab('mean home runs per year'))
 ```
+the power of stat_summary - avoids having to feed in summary data
+```{r}
+ggplot(dat[yearID<1875, ], aes(x=yearID, y=H))+
+  stat_summary(fun.data = mean_se, geom="bar")+
+  stat_summary(fun.data = mean_se, geom="errorbar", width=0.5)+
+  theme_classic()
+```
+makes it super easy to then superimpose data points as can use the same data table
+```{r}
+ggplot(dat[yearID<1875, ], aes(x=as.factor(yearID), y=H, fill=as.factor(yearID)))+
+  stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)+
+  stat_summary(fun.data = mean_se, geom="errorbar", width=0.5)+
+  geom_jitter(width = 0.1, show.legend = FALSE, shape=21, colour="black")+
+  theme_classic()
+```
+```{r}
+ggplot(dat[yearID<1875, ], aes(x=as.factor(yearID), y=H, fill=as.factor(yearID)))+
+  stat_summary(fun = median, geom="crossbar", show.legend = FALSE)+
+  geom_jitter(width = 0.1, show.legend = FALSE, shape=21, colour="black")+
+  theme_classic()
+```
+
+```{r}
+ggplot(dat, aes(x=as.factor(yearID), y=H, fill=as.factor(yearID)))+
+  stat_summary(fun.data = mean_se, geom="bar", show.legend = FALSE)+
+  stat_summary(fun.data = mean_se, geom="errorbar", width=0.5)+
+  theme_classic()
+```
+
+```{r}
+ggplot(dat[yearID<1875], aes(x=yearID, y=H, fill=as.factor(yearID)))+
+  stat_summary(fun.data=mean_se, geom="bar")+
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.5)+
+  theme_cowplot()+
+  geom_jitter(width=0.1, shape=21)+
+  theme(axis.title = element_text(size=20), axis.text = element_text(size=20), legend.position = "none")+ylim(0,800)
+```
+
+
 
 ### **bar plots**
 
@@ -487,7 +528,10 @@ do.
 
 ### **box plots**
 
+### **plots from models (e.g., logistic regression)**
+
 ### **exercises**
+
 
 ### **Resources/Links**
 
@@ -505,6 +549,9 @@ compiling this notebook
 <https://ourcodingclub.github.io/tutorials/data-vis-2/>
 
 <https://ourcodingclub.github.io/tutorials/qualitative/>
+
+This has some great videos
+https://www.youtube.com/c/RiffomonasProject
 
 ### **ggplot cheatsheet**
 
